@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
 <script>(function(){var t=localStorage.getItem('partes_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();</script>
   <script src="storage.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -100,6 +100,7 @@
 
     .menu-stat{font-size:11px;color:var(--text-sec);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85}
     .menu-stat:empty{display:none}
+    .menu-card:hover{box-shadow:0 4px 16px rgba(0,58,112,.14)}
     .menu-card:active {
       transform: scale(.98);
       box-shadow: 0 1px 4px rgba(0, 58, 112, .1)
@@ -250,7 +251,7 @@
         <strong>Instalar aplicación</strong>
         <span>Añade la app a tu pantalla de inicio</span>
       </div>
-      <button id="install-btn">Instalar</button>
+      <button type="button" id="install-btn">Instalar</button>
     </div>
   </div>
   <div class="hdr">
@@ -260,9 +261,9 @@
       <h1>Partes de Locomocion</h1>
       <p>Confederacion Hidrografica del Tajo, O.A.</p>
     </div>
-    <button class="theme-toggle" id="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
+    <button type="button" class="theme-toggle" id="theme-btn" onclick="toggleTheme()" aria-label="Cambiar tema">🌙</button>
   </div>
-  <div class="wrap">
+  <main class="wrap">
     <p class="intro">Selecciona el parte que deseas rellenar</p>
     <a class="menu-card" href="parte_servicio_diario.html">
       <div class="menu-icon">
@@ -320,19 +321,19 @@
         </div>
         <div class="st-warn-desc">Si se borra el historial del navegador se perderán todos los partes guardados. Vincula un archivo externo para mantenerlos seguros.</div>
         <div class="st-btns">
-          <button class="storage-action" onclick="setupFile(false)">Crear archivo</button>
-          <button class="storage-action" onclick="setupFile(true)">Abrir existente</button>
+          <button type="button" class="storage-action" onclick="setupFile(false)">Crear archivo</button>
+          <button type="button" class="storage-action" onclick="setupFile(true)">Abrir existente</button>
         </div>
       </div>
       <div class="st-pend" id="st-pend">
         <span class="st-pend-ico">🔗</span>
         <span class="st-pend-lbl">Datos sin sincronizar.<br>Autoriza el acceso para continuar.</span>
-        <button class="st-pend-btn" onclick="storageReconnect()">Reconectar archivo</button>
+        <button type="button" class="st-pend-btn" onclick="storageReconnect()">Reconectar archivo</button>
       </div>
       <div class="st-ok" id="st-ok">
         <span class="storage-dot"></span>
         <span class="storage-lbl">Datos guardados en archivo externo</span>
-        <button class="storage-action" onclick="storageDisconnect()">Desconectar</button>
+        <button type="button" class="storage-action" onclick="storageDisconnect()">Desconectar</button>
       </div>
     </div>
   </div>
@@ -473,7 +474,7 @@
       if (document.getElementById('_sw_upd')) return;
       var d = document.createElement('div'); d.id = '_sw_upd';
       d.setAttribute('style', 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1e3a5f;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;box-shadow:0 -2px 10px rgba(0,0,0,.4)');
-      d.innerHTML = '<span style="flex:1">Nueva versión disponible.</span><button style="flex-shrink:0;background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent">Actualizar</button>';
+      d.innerHTML = '<span style="flex:1">Nueva versión disponible.</span><button type="button" style="flex-shrink:0;background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent">Actualizar</button>';
       d.querySelector('button').addEventListener('click', function() { if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' }); });
       document.body.appendChild(d);
     }

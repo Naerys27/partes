@@ -1,10 +1,11 @@
-﻿const CACHE = 'partes-loco-v83';
+﻿const CACHE = 'partes-loco-v84';
 const FILES = [
   'index.html',
   'parte_combustible.html',
   'parte_servicio_diario.html',
   'orden_reparacion.html',
   'storage.js',
+  'jspdf.umd.min.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png'
