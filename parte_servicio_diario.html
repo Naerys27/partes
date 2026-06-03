@@ -364,7 +364,7 @@
             <div class="grid">
                <div class="f"><label>Conductor/a</label><input id="conductor" list="conductor-list-pd" placeholder="Nombre del conductor/a" required><datalist id="conductor-list-pd"></datalist></div>
                <div class="f"><label>Fecha</label><input id="fecha" type="date" required></div>
-               <div class="f"><label>Parte del Servicio del Vehículo</label><input id="parte_servicio" list="mat-list-pd" autocapitalize="characters" placeholder="Introduzca Matrícula" required><datalist id="mat-list-pd"></datalist></div>
+               <div class="f"><label>Matrícula del vehículo</label><input id="parte_servicio" list="mat-list-pd" autocapitalize="characters" placeholder="Ej. 1234-ABC" required><datalist id="mat-list-pd"></datalist></div>
                <div class="f"><label>Marca</label><input id="marca" placeholder="Ej. SEAT"></div>
                <div class="f"><label>Modelo</label><input id="modelo" placeholder="Ej. Ibiza"></div>
             </div>
@@ -431,7 +431,7 @@
       </div>
 
       <details class="action-panel">
-         <summary>Más acciones</summary>
+         <summary>Opciones</summary>
          <div class="panel-body">
             <button class="sec" onclick="if(confirm('¿Borrar todos los datos del formulario?'))resetForm()" type="button">Limpiar formulario</button>
          </div>
@@ -1124,7 +1124,7 @@
          const errors = [];
          if (!String(data.conductor || '').trim()) errors.push('Indica el nombre del conductor/a.');
          if (!data.fecha) errors.push('Indica la fecha.');
-         if (!String(data.parte_servicio || '').trim()) errors.push('Indica la matrícula en "Parte del Servicio del Vehículo".');
+         if (!String(data.parte_servicio || '').trim()) errors.push('Indica la matrícula del vehículo.');
          const haySalida = String(data.cont_salida || '').trim() !== '';
          const hayLlegada = String(data.cont_llegada || '').trim() !== '';
          if (haySalida !== hayLlegada) errors.push('Completa tanto la lectura de contador de salida como la de llegada.');
