@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
 <script>(function(){var t=localStorage.getItem('partes_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();</script>
@@ -225,7 +225,7 @@ input[readonly].calc-field{background:#f0f7ff;border-color:#c2d8ec}
         <div class="drivers-box">
           <div id="conductores_list" class="drivers-list"></div>
           <button type="button" class="driver-add" onclick="addConductorRow()">+ Añadir conductor</button>
-          <textarea id="v_conductores" style="display:none" aria-hidden="true"></textarea>
+          <datalist id="conductor-list-comb"></datalist><textarea id="v_conductores" style="display:none" aria-hidden="true"></textarea>
         </div>
       </div>
         <div class="f full"><label>Combustible</label>
@@ -1288,7 +1288,7 @@ function addConductorRow(value) {
   if (!list) return;
   var row = document.createElement('div');
   row.className = 'driver-row';
-  row.innerHTML = '<input type="text" class="driver-input" placeholder="Nombre y apellidos del conductor" value="' + ((value || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')) + '\">' +
+  row.innerHTML = '<input type="text" class="driver-input" list="conductor-list-comb" placeholder="Nombre y apellidos del conductor" value="' + ((value || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;')) + '\">' +
                   '<button type="button" class="driver-remove" onclick="removeConductorRow(this)">✕</button>';
   list.appendChild(row);
   row.querySelector('input').addEventListener('input', syncConductoresField);
@@ -1579,7 +1579,7 @@ function validateCombustible() {
 function makePDF() {
   var errs = validateCombustible();
   if (errs.length) { showErr('Revisa el parte:\n• ' + errs.join('\n• ')); return; }
-  var btn=document.getElementById('pdfbtn'); btn.textContent='Generando...'; btn.disabled=true; setTimeout(function(){ try { var JPDF=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:window.jsPDF; if(!JPDF) throw new Error('jsPDF no cargado.'); var doc=new JPDF({orientation:'portrait',unit:'mm',format:'a4'}); drawCombustibleInstitucional(doc); var mesVal=gv('v_mes')||'parte', matVal=gv('v_mat')||'vehiculo'; addPhotosPage(doc); saveCurrentVehicle(); saveHistorico(); var fname=fmtMonth(mesVal).split(' ')[0]+' '+matVal+' Parte de Combustible.pdf'; doc.save(fname); var blobUrl=null; try { blobUrl=doc.output('bloburl'); } catch(e) {} _showPDFOpenModal(blobUrl,fname); } catch(err) { showErr('ERROR: '+err.message); } btn.textContent='Generar PDF'; btn.disabled=false; },80); }
+  var btn=document.getElementById('pdfbtn'); btn.textContent='Generando...'; btn.disabled=true; setTimeout(function(){ try { var JPDF=(window.jspdf&&window.jspdf.jsPDF)?window.jspdf.jsPDF:window.jsPDF; if(!JPDF) throw new Error('jsPDF no cargado.'); var doc=new JPDF({orientation:'portrait',unit:'mm',format:'a4'}); drawCombustibleInstitucional(doc); var mesVal=gv('v_mes')||'parte', matVal=gv('v_mat')||'vehiculo'; addPhotosPage(doc); saveCurrentVehicle(); saveConductoresFromFormComb(); saveHistorico(); var fname=fmtMonth(mesVal).split(' ')[0]+' '+matVal+' Parte de Combustible.pdf'; doc.save(fname); var blobUrl=null; try { blobUrl=doc.output('bloburl'); } catch(e) {} _showPDFOpenModal(blobUrl,fname); } catch(err) { showErr('ERROR: '+err.message); } btn.textContent='Generar PDF'; btn.disabled=false; },80); }
 function _showPDFOpenModal(blobUrl, filename) {
   var dark = document.documentElement.getAttribute('data-theme') === 'dark';
   var modal = document.createElement('div');
@@ -1620,6 +1620,26 @@ function updateMatDatalist() {
     opt.value = mat;
     dl.appendChild(opt);
   });
+}
+function updateConductorDatalistComb() {
+  var set = {};
+  try { var arr = JSON.parse(FSStorage.getItem('partes_conductores_v1') || '[]'); arr.forEach(function(c) { if (c) set[c] = 1; }); } catch(e) {}
+  var db = loadVehicleDB();
+  Object.keys(db).forEach(function(mat) { var c = db[mat].conductor; if (c) set[c] = 1; });
+  var dl = document.getElementById('conductor-list-comb');
+  if (!dl) return;
+  dl.innerHTML = '';
+  Object.keys(set).sort().forEach(function(c) { var opt = document.createElement('option'); opt.value = c; dl.appendChild(opt); });
+}
+function saveConductoresFromFormComb() {
+  var names = Array.prototype.slice.call(document.querySelectorAll('.driver-input')).map(function(inp) { return (inp.value || '').trim(); }).filter(Boolean);
+  if (!names.length) return;
+  var existing = [];
+  try { existing = JSON.parse(FSStorage.getItem('partes_conductores_v1') || '[]'); } catch(e) {}
+  var set = {};
+  existing.forEach(function(c) { if (c) set[c] = 1; });
+  names.forEach(function(c) { set[c] = 1; });
+  FSStorage.setItem('partes_conductores_v1', JSON.stringify(Object.keys(set).sort()));
 }
 function onMesChange(auto) {
   var mes = gv('v_mes');
@@ -1990,7 +2010,7 @@ function suggestKmIniFromPrevMonth(mat, mes) {
   }
 }
 
-window.addEventListener("load", function() { initConductoresUI(); resizeSigCanvas(); setTimeout(resizeSigCanvas, 400); FSStorage.onReady(function() { updateMatDatalist(); document.getElementById('v_mat').addEventListener('change', onMatriculaChange); var _d = new Date(); var _mes = _d.getFullYear() + '-' + String(_d.getMonth() + 1).padStart(2, '0'); var _vmes = document.getElementById('v_mes'); if (_vmes && !_vmes.value) { _vmes.value = _mes; onMesChange(true); } renderHistorico(); }); });
+window.addEventListener("load", function() { initConductoresUI(); resizeSigCanvas(); setTimeout(resizeSigCanvas, 400); FSStorage.onReady(function() { updateMatDatalist(); updateConductorDatalistComb(); document.getElementById('v_mat').addEventListener('change', onMatriculaChange); var _d = new Date(); var _mes = _d.getFullYear() + '-' + String(_d.getMonth() + 1).padStart(2, '0'); var _vmes = document.getElementById('v_mes'); if (_vmes && !_vmes.value) { _vmes.value = _mes; onMesChange(true); } renderHistorico(); }); });
 function toggleTheme() {
   var dark = document.documentElement.getAttribute('data-theme') === 'dark';
   if (dark) {
