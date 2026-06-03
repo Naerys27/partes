@@ -1,18 +1,21 @@
-const CACHE = 'partes-loco-v2';
+const CACHE = 'partes-loco-v82';
 const FILES = [
   'index.html',
   'parte_combustible.html',
   'parte_servicio_diario.html',
   'orden_reparacion.html',
+  'storage.js',
   'manifest.json',
   'icons/icon-192.png',
   'icons/icon-512.png'
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting())
-  );
+  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
+});
+
+self.addEventListener('message', e => {
+  if (e.data && e.data.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('activate', e => {

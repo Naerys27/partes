@@ -1,20 +1,26 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
-<script>(function(){var t=localStorage.getItem('partes_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();</script>
   <meta charset="UTF-8">
+<script>(function(){var t=localStorage.getItem('partes_theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark')})();</script>
+  <script src="storage.js"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Partes de Locomocion</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f6f9c">
+  <meta name="theme-color" content="#061929">
+  <script>if(localStorage.getItem('partes_theme')!='dark')document.querySelector('meta[name="theme-color"]').setAttribute('content','#0f6f9c');</script>
   <link rel="apple-touch-icon" href="icons/icon-192.png">
   <style>
-    :root{--bg:#f2f4f7;--surface:#fff;--text:#1a1a1a;--text-sec:#64748b;--text-muted:#5a7184;--blue:#0f6f9c;--border:#d8e2ea;--menu-title:#003a70}
-    [data-theme="dark"]{--bg:#111827;--surface:#1f2937;--text:#f1f5f9;--text-sec:#94a3b8;--text-muted:#7c95a8;--blue:#38a3c8;--border:#374151;--menu-title:#93c5d8}
+    :root{--bg:#f0f2f5;--surface:#fff;--text:#1a1a1a;--text-sec:#475569;--text-muted:#5a7184;--blue:#0f6f9c;--border:#dde3ea;--menu-title:#003a70}
+    [data-theme="dark"]{--bg:#0d1117;--surface:#161b22;--text:#e6edf3;--text-sec:#8b949e;--text-muted:#6e7f8d;--blue:#38a3c8;--border:#21262d;--menu-title:#93c5d8}
+    [data-theme="dark"] .hdr{background:#061929;box-shadow:none}
+    [data-theme="dark"] #install-banner{background:linear-gradient(135deg,#061929 0%,#040f1a 100%);box-shadow:0 -4px 20px rgba(0,0,0,.5)}
+    [data-theme="dark"] #install-btn{background:#1c3a5e;color:#79c0e0}
+    [data-theme="dark"] #install-btn:active{background:#152d4a}
     * {
       box-sizing: border-box;
       margin: 0;
@@ -143,38 +149,107 @@
       opacity: .5
     }
 
-    .theme-toggle{margin-left:auto;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:4px 8px;line-height:1;-webkit-tap-highlight-color:transparent}
+    .theme-toggle{margin-left:auto;background:none;border:none;color:#fff;font-size:20px;cursor:pointer;padding:10px 12px;line-height:1;-webkit-tap-highlight-color:transparent}
+    .storage-panel{border-radius:14px;overflow:hidden}
+    .st-warn{background:#fffbeb;border:1.5px solid #f59e0b;border-radius:14px;padding:16px;display:none;flex-direction:column;gap:12px;box-shadow:0 2px 12px rgba(245,158,11,.18)}
+    [data-theme="dark"] .st-warn{background:#1c1507;border-color:#b45309}
+    .st-warn-hdr{display:flex;align-items:center;gap:10px}
+    .st-warn-ico{font-size:26px;line-height:1;flex-shrink:0}
+    .st-warn-title{font-size:15px;font-weight:700;color:#92400e}
+    [data-theme="dark"] .st-warn-title{color:#fcd34d}
+    .st-warn-desc{font-size:12px;color:#78350f;line-height:1.6}
+    [data-theme="dark"] .st-warn-desc{color:#fbbf24}
+    .st-btns{display:flex;gap:8px}
+    .st-btns .storage-action{flex:1;text-align:center;background:#d97706;color:#7c2d12}
+    [data-theme="dark"] .st-btns .storage-action{background:#b45309}
+    .st-ok{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:14px 16px;display:none;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,58,112,.08)}
+    .st-pend{background:#eff6ff;border:1.5px solid #3b82f6;border-radius:14px;padding:14px 16px;display:none;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(59,130,246,.15)}
+    [data-theme="dark"] .st-pend{background:#1e3052;border-color:#2563eb}
+    .st-pend-ico{font-size:22px;flex-shrink:0}
+    .st-pend-lbl{flex:1;font-size:12px;color:#1e40af;line-height:1.5}
+    [data-theme="dark"] .st-pend-lbl{color:#93c5fd}
+    .st-pend-btn{background:#1d5fa0;color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent;flex-shrink:0}
+    .storage-dot{width:9px;height:9px;border-radius:50%;background:#22c55e;flex-shrink:0;box-shadow:0 0 0 3px rgba(34,197,94,.2)}
+    .storage-lbl{flex:1;font-size:12px;color:var(--text-sec);line-height:1.4}
+    .storage-action{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;-webkit-tap-highlight-color:transparent}
     #install-banner {
       display: block;
       position: fixed;
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 11px 14px;
+      background: linear-gradient(135deg, #0f6f9c 0%, #0a5578 100%);
+      padding: 12px 16px 16px;
       z-index: 100;
-      box-shadow: 0 -2px 10px rgba(0, 0, 0, .08)
+      box-shadow: 0 -4px 20px rgba(15,111,156,.35)
     }
 
-    #install-banner button {
-      width: 100%;
-      background: var(--blue);
+    #install-banner-inner {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    #install-banner-ico {
+      font-size: 30px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    #install-banner-text {
+      flex: 1;
+      min-width: 0;
+    }
+
+    #install-banner-text strong {
+      display: block;
       color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    #install-banner-text span {
+      display: block;
+      color: rgba(255,255,255,.75);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    #install-btn {
+      background: #fff;
+      color: #0f6f9c;
       border: none;
       border-radius: 9px;
-      padding: 13px;
+      padding: 11px 16px;
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      -webkit-tap-highlight-color: transparent
+      -webkit-tap-highlight-color: transparent;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
+
+    #install-btn:active {
+      background: #e0eff8;
+    }
+    .export-link{display:flex;align-items:center;justify-content:center;gap:6px;text-align:center;font-size:13px;font-weight:600;color:var(--blue);text-decoration:none;padding:12px 0 6px;cursor:pointer;-webkit-tap-highlight-color:transparent;opacity:.8}
+    .export-link:active{opacity:.5}
   </style>
 </head>
 
 <body>
   <div id="install-banner">
-    <button id="install-btn">Instalar APP</button>
+    <div id="install-banner-inner">
+      <div id="install-banner-ico">📲</div>
+      <div id="install-banner-text">
+        <strong>Instalar aplicación</strong>
+        <span>Añade la app a tu pantalla de inicio</span>
+      </div>
+      <button id="install-btn">Instalar</button>
+    </div>
   </div>
   <div class="hdr">
     <img class="hdr-logo"
@@ -231,16 +306,89 @@
       </div>
       <span class="menu-arrow">›</span>
     </a>
+    <div class="storage-panel" id="st-panel">
+      <div id="st-nosup" style="display:none;background:#f8f8f8;border:1px solid #dde3ea;border-radius:14px;padding:14px 16px;font-size:12px;color:#5a7184;line-height:1.5">El archivo de datos no está disponible en este navegador. Usa Chrome o Edge para activar esta función.</div>
+      <div class="st-warn" id="st-warn">
+        <div class="st-warn-hdr">
+          <span class="st-warn-ico">⚠️</span>
+          <span class="st-warn-title">Datos sin proteger</span>
+        </div>
+        <div class="st-warn-desc">Si se borra el historial del navegador se perderán todos los partes guardados. Vincula un archivo externo para mantenerlos seguros.</div>
+        <div class="st-btns">
+          <button class="storage-action" onclick="setupFile(false)">Crear archivo</button>
+          <button class="storage-action" onclick="setupFile(true)">Abrir existente</button>
+        </div>
+      </div>
+      <div class="st-pend" id="st-pend">
+        <span class="st-pend-ico">🔗</span>
+        <span class="st-pend-lbl">Datos sin sincronizar.<br>Autoriza el acceso para continuar.</span>
+        <button class="st-pend-btn" onclick="storageReconnect()">Reconectar archivo</button>
+      </div>
+      <div class="st-ok" id="st-ok">
+        <span class="storage-dot"></span>
+        <span class="storage-lbl">Datos guardados en archivo externo</span>
+        <button class="storage-action" onclick="storageDisconnect()">Desconectar</button>
+      </div>
+    </div>
   </div>
+  <a class="export-link" onclick="exportAllData()">↓ exportar copia de todos los datos</a>
+  <input type="file" id="import-all-input" accept=".json" style="display:none" onchange="importAllData(event)">
   <script>
+    FSStorage.init();
+    FSStorage.onReady(updateStorageUI);
+    function updateStorageUI() {
+      var warn = document.getElementById('st-warn');
+      var ok = document.getElementById('st-ok');
+      var pend = document.getElementById('st-pend');
+      if (!FSStorage.isSupported()) {
+        warn.style.display = 'none';
+        ok.style.display = 'none';
+        if (pend) pend.style.display = 'none';
+        var noSup = document.getElementById('st-nosup');
+        if (noSup) noSup.style.display = 'block';
+        return;
+      }
+      if (FSStorage.isActive()) {
+        warn.style.display = 'none';
+        ok.style.display = 'flex';
+        if (pend) pend.style.display = 'none';
+      } else if (FSStorage.isPending()) {
+        warn.style.display = 'none';
+        ok.style.display = 'none';
+        if (pend) pend.style.display = 'flex';
+      } else {
+        warn.style.display = 'flex';
+        ok.style.display = 'none';
+        if (pend) pend.style.display = 'none';
+      }
+    }
+    function storageReconnect() {
+      FSStorage.reconnect().then(function(ok) { updateStorageUI(); });
+    }
+    function storageDisconnect() {
+      if (!confirm('¿Desconectar el archivo de datos?\nLos datos quedarán en el archivo pero la app volverá a usar la caché del navegador.')) return;
+      FSStorage.disconnect().then(updateStorageUI);
+    }
+    function setupFile(useExisting) {
+      FSStorage.setup(useExisting).then(function(ok) {
+        if (ok) {
+          updateStorageUI();
+          alert('¡Archivo configurado!\nA partir de ahora los datos se guardan en el archivo seleccionado y no se perderán al borrar el historial.');
+        } else {
+          updateStorageUI();
+        }
+      });
+    }
     function toggleTheme() {
       var dark = document.documentElement.getAttribute('data-theme') === 'dark';
       if (dark) {
         document.documentElement.removeAttribute('data-theme');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0f6f9c');
         localStorage.setItem('partes_theme', 'light');
         document.getElementById('theme-btn').textContent = '🌙';
       } else {
         document.documentElement.setAttribute('data-theme', 'dark');
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#061929');
         localStorage.setItem('partes_theme', 'dark');
         document.getElementById('theme-btn').textContent = '☀️';
       }
@@ -248,10 +396,36 @@
     (function () {
       if (localStorage.getItem('partes_theme') === 'dark') {
         document.getElementById('theme-btn').textContent = '☀️';
+        document.querySelector('meta[name="theme-color"]').setAttribute('content', '#061929');
       }
     })();
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js'));
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(reg) {
+          if (reg.waiting) _showSWUpdateBanner(reg);
+          reg.addEventListener('updatefound', function() {
+            var nw = reg.installing;
+            nw.addEventListener('statechange', function() {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) _showSWUpdateBanner(reg);
+            });
+          });
+        });
+        var _swRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+          if (!_swRefreshing) { _swRefreshing = true; window.location.reload(); }
+        });
+      });
+    }
+    function _showSWUpdateBanner(reg) {
+      if (document.getElementById('_sw_upd')) return;
+      var d = document.createElement('div'); d.id = '_sw_upd';
+      d.setAttribute('style', 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#1e3a5f;color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:13px;box-shadow:0 -2px 10px rgba(0,0,0,.4)');
+      d.innerHTML = '<span style="flex:1">Nueva versión disponible.</span><button style="flex-shrink:0;background:#3b82f6;color:#fff;border:none;border-radius:7px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;-webkit-tap-highlight-color:transparent">Actualizar</button>';
+      d.querySelector('button').addEventListener('click', function() { if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' }); });
+      document.body.appendChild(d);
+    }
+    if (window.matchMedia('(display-mode: standalone)').matches || navigator.standalone) {
+      document.getElementById('install-banner').style.display = 'none';
     }
     var _deferredPrompt = null;
     var _installBtn = document.getElementById('install-btn');
@@ -276,6 +450,31 @@
       document.getElementById('install-banner').style.display = 'none';
       _deferredPrompt = null;
     });
+    var _ALL_KEYS = ['partes_vehiculos_v1','partes_conductores_v1','cht_parte_servicio_diario_v1','cht_orden_reparacion_v1','partes_combustible_hist_v1'];
+    function exportAllData() {
+      var data = { version: 1, exportedAt: new Date().toISOString() };
+      _ALL_KEYS.forEach(function(k) { var v = FSStorage.getItem(k); if (v) try { data[k] = JSON.parse(v); } catch(e) { data[k] = v; } });
+      var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'partes_copia_' + new Date().toISOString().slice(0, 10) + '.json';
+      document.body.appendChild(a); a.click();
+      setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+    }
+    function importAllData(ev) {
+      var file = ev.target.files && ev.target.files[0]; if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function() {
+        try {
+          var json = JSON.parse(reader.result);
+          var count = 0;
+          _ALL_KEYS.forEach(function(k) { if (json[k] !== undefined) { FSStorage.setItem(k, JSON.stringify(json[k])); count++; } });
+          alert('Importado: ' + count + ' módulos restaurados.');
+        } catch(e) { alert('Error al importar: ' + e.message); }
+        ev.target.value = '';
+      };
+      reader.readAsText(file, 'utf-8');
+    }
   </script>
 </body>
 
